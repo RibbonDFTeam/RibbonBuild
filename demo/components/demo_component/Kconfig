@@ -1,0 +1,7 @@
+
+config MODULE_DEMO_COMPONENT_ENABLE
+    bool "Enable demo component"
+    default n
+    help
+      Enable demo component.
+

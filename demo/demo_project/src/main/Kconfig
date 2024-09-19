@@ -1,0 +1,7 @@
+
+
+config MODULE_MAIN_ENABLE
+    bool "main app enalbe"
+    default y
+    help
+      Enable main app.

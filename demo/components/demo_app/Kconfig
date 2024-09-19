@@ -1,0 +1,8 @@
+
+config MODULE_DEMO_APP_ENABLE
+    bool "Enable demo app"
+    default y
+    help
+      Enable demo app.
+    select MODULE_DEMO_COMPONENT_ENABLE
+

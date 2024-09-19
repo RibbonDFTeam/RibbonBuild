@@ -1,0 +1,50 @@
+
+config SYSTEM_NAME
+    string "System name"
+    default "Linux"
+
+config TOOL_CHAIN_PREFIX
+    string "Tool chain prefix"
+    default ""
+
+config C_COMPILER
+    string "c compiler"
+    default "gcc"
+
+config CXX_COMPILER
+    string "cxx compiler"
+    default "g++"
+
+config C_FLAGS
+    string "c flags"
+    default ""
+
+config CXX_FLAGS
+    string "cxx flags"
+    default ""
+
+config LD_FLAGS
+    string "ld flags"
+    default ""
+
+config PROJECT_DEFINES
+    string "Project definitions"
+    default ""
+
+config PROJECT_DEBUG
+    bool "Enable debug"
+    default y
+
+config PROJECT_MAJOR_VERSION
+    int "Major version number"
+    default 1
+
+config PROJECT_MINOR_VERSION
+    int "Minor version number"
+    default 0
+
+config PROJECT_PATCH_VERSION
+    int "Patch version number"
+    default 0
+
+

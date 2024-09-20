@@ -296,7 +296,7 @@ function(VariablesCheck)
         set(RibbonComponentsPath ${RibbonComponentsPathNew} PARENT_SCOPE)
         message(STATUS "RibbonComponentsPath: ${RibbonComponentsPathNew}")
     else()
-        message(FATAL_ERROR "RibbonComponentsPath not defined or empty")
+        message(FATAL_ERROR "RibbonComponentsPath not defined or empty, you must have at least one component directory")
     endif()
 endfunction()
 

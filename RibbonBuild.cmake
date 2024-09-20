@@ -207,7 +207,7 @@ function(KconfigSetup targets)
     )
 
     add_custom_target(distclean
-        COMMAND python "${RibbonDF_PATH}/project/RibbonKconfig.py" "--distclean ${PROJECT_SOURCE_DIR}"
+        COMMAND python "${RibbonBuildPath}/RibbonKconfig.py" "-d${PROJECT_SOURCE_DIR}&"
         COMMENT "clean kconfig files"
     )
 endfunction()

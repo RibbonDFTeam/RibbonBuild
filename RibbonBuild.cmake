@@ -162,8 +162,8 @@ macro(ConfigProject)
 
     set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/install" CACHE PATH "Install path" FORCE)
 
-    find_program(CMAKE_C_COMPILER "${CONFIG_TOOL_CHAIN_PREFIX}${CONFIG_C_COMPILER}")
-    find_program(CMAKE_CXX_COMPILER "${CONFIG_TOOL_CHAIN_PREFIX}${CONFIG_CXX_COMPILER}")
+    set(CMAKE_C_COMPILER "${CONFIG_TOOL_CHAIN_PREFIX}${CONFIG_C_COMPILER}")
+    set(CMAKE_CXX_COMPILER "${CONFIG_TOOL_CHAIN_PREFIX}${CONFIG_CXX_COMPILER}")
 
     set(CMAKE_C_FLAGS "${CONFIG_C_FLAGS}")
     set(CMAKE_CXX_FLAGS "${CONFIG_CXX_FLAGS}")
@@ -171,6 +171,8 @@ macro(ConfigProject)
 
     add_definitions(${PROJECT_DEFINES} "${CONFIG_PROJECT_DEFINES}")
     message("Project Config")
+    message(STATUS "CMAKE_C_COMPILER: ${CMAKE_C_COMPILER}")
+    message(STATUS "CMAKE_CXX_COMPILER: ${CMAKE_CXX_COMPILER}")
     message(STATUS "Project Install Path: ${CMAKE_INSTALL_PREFIX}")
     message(STATUS "Project Build Type: ${CMAKE_BUILD_TYPE}")
     message(STATUS "Project C_COMPILER: ${CMAKE_C_COMPILER}")

@@ -14,7 +14,7 @@ macro(TargetInit)
     set(CUSTOM_DEFINES "")
 endmacro()
 
-macro(RibbonDF_target_config)
+macro(TargetConfig)
     string(REPLACE " " ";" TARGET_CMAKE_C_FLAGS "${CMAKE_C_FLAGS};${CUSTOM_CMAKE_C_FLAGS}")
     string(REPLACE " " ";" TARGET_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS};${CUSTOM_CMAKE_CXX_FLAGS}")
     string(REPLACE " " ";" TARGET_CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS};${CUSTOM_CMAKE_EXE_LINKER_FLAGS}")
@@ -95,7 +95,7 @@ function(RibbonBuildApplication)
     set_target_properties(${target_name} PROPERTIES INSTALL_RPATH "../lib")
     set_target_properties(${target_name} PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-    RibbonDF_target_config()
+    TargetConfig()
 endfunction()
 
 function(RibbonBuildComponent)
@@ -123,7 +123,7 @@ function(RibbonBuildComponent)
 
     add_library(${target_name} ${LIBRARY_TYPE} ${SRC})
 
-    RibbonDF_target_config()
+    TargetConfig()
 endfunction()
 
 function(ComponentEnable component_name value)
@@ -262,7 +262,7 @@ function(DoBuild)
     BuildTargets("${targets}")
 endfunction()
 
-function(RibbonDF_python_check)
+function(PythonCheck)
     find_package(Python 3.8 REQUIRED)
 
     if(NOT Python_FOUND)
@@ -272,7 +272,7 @@ endfunction()
 
 function(DependentsCheck)
     message("Dependents Check")
-    RibbonDF_python_check()
+    PythonCheck()
 endfunction()
 
 function(VariablesCheck)
@@ -306,16 +306,6 @@ function(RibbonBuild)
     message("Project: ${PROJECT_NAME} Build Start")
 
     VariablesCheck()
-
-    # 获取当前项目的根目录的绝对路径
-    # get_filename_component(RibbonDF_PATH "${PROJECT_SOURCE_DIR}/../.." ABSOLUTE)
-    # message("RibbonDF_PATH: ${RibbonDF_PATH}")
-
-    # # 引入TargetBuild.cmake库
-    # include(${RibbonDF_PATH}/project/TargetBuild.cmake)
-
-    # 设置项目的目标库路径列表
-    # set(RibbonComponentsPath "${RibbonDF_PATH}/third_lib" "${RibbonDF_PATH}/components" "${PROJECT_SOURCE_DIR}/src")
 
     # 依赖检查
     DependentsCheck()

@@ -5,7 +5,7 @@ project(${PROJECT_NAME} VERSION 0.0.1 LANGUAGES C CXX)
 
 set(RibbonBuildPath "${PROJECT_SOURCE_DIR}/..")
 set(RibbonComponentsPath
-    "${PROJECT_SOURCE_DIR}/components"
+    "${PROJECT_SOURCE_DIR}/src"
 )
 
 include(${RibbonBuildPath}/RibbonBuild.cmake)

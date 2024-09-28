@@ -6,12 +6,11 @@ from menuconfig import menuconfig
 
 
 def distclean(project_path):
-    shutil.rmtree(os.path.join(project_path, "build"))
-    shutil.rmtree(os.path.join(project_path, "config"))
-    shutil.rmtree(os.path.join(project_path, "install"))
-    os.mkdir(os.path.join(project_path, "build"))
-    os.mkdir(os.path.join(project_path, "config"))
-    os.mkdir(os.path.join(project_path, "install"))
+    os.system("rm -rf " + os.path.join(project_path, "build/*"))
+    os.system("rm -rf " + os.path.join(project_path, "build/.* 2>/dev/null"))
+    os.system("rm -rf " + os.path.join(project_path, "config/*"))
+    os.system("rm -rf " + os.path.join(project_path, "config/.* 2>/dev/null"))
+    os.system("rm -rf " + os.path.join(project_path, "install/*"))
 
 
 def write_cmake_setting(project_path, kconf):

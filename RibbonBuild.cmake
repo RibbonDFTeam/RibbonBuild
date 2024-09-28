@@ -197,12 +197,13 @@ endfunction()
 function (KconfigSetup)
     message("Kconfig Setup")
 
+    message(STATUS "RibbonBuildPath: ${RibbonBuildPath}")
+
     add_custom_target(menuconfig
         COMMAND python "${RibbonBuildPath}/RibbonKconfig.py" "-m${PROJECT_SOURCE_DIR}"
         COMMAND cd "${PROJECT_SOURCE_DIR}/build"
         COMMAND rm -rf CMakeFiles
         COMMAND rm -rf CMakeCache.txt
-        COMMAND rm -rf Makefile
         COMMAND cmake ".."
         COMMENT "execute menuconfig"
     )
@@ -210,6 +211,7 @@ function (KconfigSetup)
     add_custom_target(distclean
         COMMAND python "${RibbonBuildPath}/RibbonKconfig.py" "-d${PROJECT_SOURCE_DIR}&"
         COMMENT "clean kconfig files"
+        COMMAND exit
     )
 
     if(EXISTS "${PROJECT_SOURCE_DIR}/build/Kconfig")
@@ -305,6 +307,7 @@ function(VariablesCheck)
 endfunction()
 
 macro(ProjectSetup)
+
     # 参数检查()
     VariablesCheck()
 

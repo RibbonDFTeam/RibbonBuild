@@ -197,7 +197,9 @@ endfunction()
 function (KconfigSetup)
     message("Kconfig Setup")
 
-    message(STATUS "RibbonBuildPath: ${RibbonBuildPath}")
+    # get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME_WE CACHE STRING "Project name")
+    # get_filename_component(PROJECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE CACHE STRING "Project Path")
+
 
     add_custom_target(menuconfig
         COMMAND python "${RibbonBuildPath}/RibbonKconfig.py" "-m${PROJECT_SOURCE_DIR}"
@@ -307,6 +309,9 @@ function(VariablesCheck)
 endfunction()
 
 macro(ProjectSetup)
+
+    get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME_WE "Project name")
+    get_filename_component(PROJECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE "Project Path")
 
     # 参数检查()
     VariablesCheck()

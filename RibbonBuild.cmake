@@ -150,81 +150,6 @@ function(BuildTargets targets_path_list)
     endforeach()
 endfunction()
 
-macro(ConfigProject)
-    if(EXISTS ${PROJECT_SOURCE_DIR}/build/toolchain.cmake)
-        include(${PROJECT_SOURCE_DIR}/build/toolchain.cmake)
-    endif()
-
-    include(${PROJECT_SOURCE_DIR}/config/RibbonDFConfig.cmake)
-
-    if(${CONFIG_PROJECT_DEBUG})
-        set(CMAKE_BUILD_TYPE Debug)
-    else()
-        set(CMAKE_BUILD_TYPE Release)
-    endif()
-
-    set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/install" CACHE PATH "Install path" FORCE)
-
-    # message(STATUS "${CONFIG_TOOL_CHAIN_PREFIX}${CONFIG_C_COMPILER}")
-    # find_program(CONFIG_C_COMPILER "${CONFIG_TOOL_CHAIN_PREFIX}${CONFIG_C_COMPILER}")
-    # find_program(CONFIG_CXX_COMPILER "${CONFIG_TOOL_CHAIN_PREFIX}${CONFIG_CXX_COMPILER}")
-    # message(STATUS "C_COMPILER: ${CONFIG_C_COMPILER}")
-
-    # set(CMAKE_SYSTEM_NAME "${CONFIG_SYSTEM_NAME}")
-    # set(CMAKE_SYSTEM_PROCESSOR "${CONFIG_SYSTEM_PROCESSOR}")
-    # set(CMAKE_C_COMPILER "${CONFIG_C_COMPILER}")
-    # set(CMAKE_CXX_COMPILER "${CONFIG_CXX_COMPILER}")
-    set(CMAKE_C_FLAGS "${CONFIG_C_FLAGS}")
-    set(CMAKE_CXX_FLAGS "${CONFIG_CXX_FLAGS}")
-    set(CMAKE_EXE_LINKER_FLAGS "${CONFIG_LD_FLAGS}")
-    add_definitions(${PROJECT_DEFINES} "${CONFIG_PROJECT_DEFINES}")
-    message("Project Config")
-    message(STATUS "Project Build Type: ${CMAKE_BUILD_TYPE}")
-    message(STATUS "Project Install Path: ${CMAKE_INSTALL_PREFIX}")
-    message(STATUS "Project System Name: ${CMAKE_SYSTEM_NAME}")
-    message(STATUS "Project System Processor: ${CMAKE_SYSTEM_PROCESSOR}")
-    message(STATUS "Project C_COMPILER: ${CMAKE_C_COMPILER}")
-    message(STATUS "Project CXX_COMPILER: ${CMAKE_CXX_COMPILER}")
-    message(STATUS "Project CMAKE_C_FLAGS: ${CMAKE_C_FLAGS}")
-    message(STATUS "Project CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
-    message(STATUS "Project CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
-
-    # message(STATUS "Project Defines: ${PROJECT_DEFINES}")
-endmacro()
-
-function(KconfigSetup)
-    message("Kconfig Setup")
-
-    message(STATUS "${RibbonBuildPath}/RibbonKconfig.py -i${PROJECT_SOURCE_DIR};${RibbonComponentsPath}")
-
-    # 入参改为项目路径和components路径
-    execute_process(
-        COMMAND python "${RibbonBuildPath}/RibbonKconfig.py" "-i${PROJECT_SOURCE_DIR};${RibbonComponentsPath}"
-        RESULT_VARIABLE return_code
-        OUTPUT_VARIABLE python_output
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-
-    if(return_code EQUAL 0)
-        message(STATUS "Kconfig files generated")
-    else()
-        message(FATAL_ERROR "Kconfig files generate failed, return_code:${return_code}")
-    endif()
-
-    # 入参改为Kconfig文件路径
-    add_custom_target(menuconfig
-        COMMAND python "${RibbonBuildPath}/RibbonKconfig.py" "-m${PROJECT_SOURCE_DIR}"
-        COMMAND cd "${PROJECT_SOURCE_DIR}/build"
-        COMMAND cmake ".."
-        COMMENT "execute menuconfig"
-    )
-
-    add_custom_target(distclean
-        COMMAND python "${RibbonBuildPath}/RibbonKconfig.py" "-d${PROJECT_SOURCE_DIR}&"
-        COMMENT "clean kconfig files"
-    )
-endfunction()
-
 # @brief 在指定路径下查找库
 # @param target_path 查找库的路径
 # @return
@@ -253,7 +178,7 @@ function(ScanTarget target_path)
     set(targets ${tmp_targets} PARENT_SCOPE)
 endfunction()
 
-function(DoBuild)
+function(RibbonBuild)
     # 扫描目标
     set(targets "")
 
@@ -268,6 +193,75 @@ function(DoBuild)
     # 注册目标
     BuildTargets("${targets}")
 endfunction()
+
+function (KconfigSetup)
+    message("Kconfig Setup")
+
+    add_custom_target(menuconfig
+        COMMAND python "${RibbonBuildPath}/RibbonKconfig.py" "-m${PROJECT_SOURCE_DIR}"
+        COMMAND cd "${PROJECT_SOURCE_DIR}/build"
+        COMMAND cmake ".."
+        COMMENT "execute menuconfig"
+    )
+
+    add_custom_target(distclean
+        COMMAND python "${RibbonBuildPath}/RibbonKconfig.py" "-d${PROJECT_SOURCE_DIR}&"
+        COMMENT "clean kconfig files"
+    )
+
+    if(EXISTS "${PROJECT_SOURCE_DIR}/build/Kconfig")
+        return()
+    endif()
+
+    message(STATUS "Kconfig init")
+    # message(STATUS "${RibbonBuildPath}/RibbonKconfig.py -i${PROJECT_SOURCE_DIR};${RibbonComponentsPath}")
+
+    execute_process(
+    COMMAND python "${RibbonBuildPath}/RibbonKconfig.py" "-i${PROJECT_SOURCE_DIR};${RibbonComponentsPath}"
+    RESULT_VARIABLE return_code
+    OUTPUT_VARIABLE python_output
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
+    if(return_code EQUAL 0)
+        message(STATUS "Kconfig files generated")
+    else()
+        message(FATAL_ERROR "Kconfig files generate failed, return_code:${return_code}")
+    endif()
+
+endfunction()
+
+macro(ConfigProject)
+    include(${PROJECT_SOURCE_DIR}/config/RibbonDFConfig.cmake)
+
+    set(CMAKE_SYSTEM_NAME "${CONFIG_SYSTEM_NAME}")
+    set(CMAKE_SYSTEM_PROCESSOR "${CONFIG_SYSTEM_PROCESSOR}")
+    set(CMAKE_C_COMPILER "${CONFIG_TOOL_CHAIN_PREFIX}${CONFIG_C_COMPILER}")
+    set(CMAKE_CXX_COMPILER "${CONFIG_TOOL_CHAIN_PREFIX}${CONFIG_CXX_COMPILER}")
+    set(CMAKE_C_FLAGS "${CONFIG_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CONFIG_CXX_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CONFIG_LD_FLAGS}")
+    add_definitions(${PROJECT_DEFINES} "${CONFIG_PROJECT_DEFINES}")
+    set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/install" CACHE PATH "Install path" FORCE)
+    if(${CONFIG_PROJECT_DEBUG})
+        set(CMAKE_BUILD_TYPE Debug)
+    else()
+        set(CMAKE_BUILD_TYPE Release)
+    endif()
+
+    message("Project Config")
+    message(STATUS "Project System Name: ${CMAKE_SYSTEM_NAME}")
+    message(STATUS "Project System Processor: ${CMAKE_SYSTEM_PROCESSOR}")
+    message(STATUS "Project C_COMPILER: ${CMAKE_C_COMPILER}")
+    message(STATUS "Project CXX_COMPILER: ${CMAKE_CXX_COMPILER}")
+    message(STATUS "Project CMAKE_C_FLAGS: ${CMAKE_C_FLAGS}")
+    message(STATUS "Project CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+    message(STATUS "Project CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
+    message(STATUS "Project Build Type: ${CMAKE_BUILD_TYPE}")
+    message(STATUS "Project Install Path: ${CMAKE_INSTALL_PREFIX}")
+
+    # message(STATUS "Project Defines: ${PROJECT_DEFINES}")
+endmacro()
 
 function(PythonCheck)
     find_package(Python 3.8 REQUIRED)
@@ -307,26 +301,19 @@ function(VariablesCheck)
     endif()
 endfunction()
 
-# @brief 项目构建函数
-# @return
-function(RibbonBuild)
-    message("Project: ${PROJECT_NAME} Build Start")
-
+macro(ProjectSetup)
+    # 参数检查()
     VariablesCheck()
 
     # 依赖检查
     DependentsCheck()
 
-    # kconfig生成
-    # KconfigSetup()
+    # 配置Kconfig
+    KconfigSetup()
 
     # 配置项目
     ConfigProject()
 
-    # 构建项目
-    DoBuild()
+endmacro(ProjectSetup)
 
-    message(STATUS "Project Config done")
-endfunction()
-
-# RibbonBuild()
+ProjectSetup()

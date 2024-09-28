@@ -194,12 +194,8 @@ function(RibbonBuild)
     BuildTargets("${targets}")
 endfunction()
 
-function (KconfigSetup)
+function(KconfigSetup)
     message("Kconfig Setup")
-
-    # get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME_WE CACHE STRING "Project name")
-    # get_filename_component(PROJECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE CACHE STRING "Project Path")
-
 
     add_custom_target(menuconfig
         COMMAND python "${RibbonBuildPath}/RibbonKconfig.py" "-m${PROJECT_SOURCE_DIR}"
@@ -221,13 +217,13 @@ function (KconfigSetup)
     endif()
 
     message(STATUS "Kconfig init")
-    # message(STATUS "${RibbonBuildPath}/RibbonKconfig.py -i${PROJECT_SOURCE_DIR};${RibbonComponentsPath}")
 
+    # message(STATUS "${RibbonBuildPath}/RibbonKconfig.py -i${PROJECT_SOURCE_DIR};${RibbonComponentsPath}")
     execute_process(
-    COMMAND python "${RibbonBuildPath}/RibbonKconfig.py" "-i${PROJECT_SOURCE_DIR};${RibbonComponentsPath}"
-    RESULT_VARIABLE return_code
-    OUTPUT_VARIABLE python_output
-    OUTPUT_STRIP_TRAILING_WHITESPACE
+        COMMAND python "${RibbonBuildPath}/RibbonKconfig.py" "-i${PROJECT_SOURCE_DIR};${RibbonComponentsPath}"
+        RESULT_VARIABLE return_code
+        OUTPUT_VARIABLE python_output
+        OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 
     if(return_code EQUAL 0)
@@ -235,7 +231,6 @@ function (KconfigSetup)
     else()
         message(FATAL_ERROR "Kconfig files generate failed, return_code:${return_code}")
     endif()
-
 endfunction()
 
 macro(ConfigProject)
@@ -250,6 +245,7 @@ macro(ConfigProject)
     set(CMAKE_EXE_LINKER_FLAGS "${CONFIG_LD_FLAGS}")
     add_definitions(${PROJECT_DEFINES} "${CONFIG_PROJECT_DEFINES}")
     set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/install" CACHE PATH "Install path" FORCE)
+
     if(${CONFIG_PROJECT_DEBUG})
         set(CMAKE_BUILD_TYPE Debug)
     else()
@@ -309,7 +305,6 @@ function(VariablesCheck)
 endfunction()
 
 macro(ProjectSetup)
-
     get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME_WE "Project name")
     get_filename_component(PROJECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE "Project Path")
 
@@ -324,7 +319,6 @@ macro(ProjectSetup)
 
     # 配置项目
     ConfigProject()
-
 endmacro(ProjectSetup)
 
 ProjectSetup()

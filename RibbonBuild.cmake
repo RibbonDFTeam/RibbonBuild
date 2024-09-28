@@ -151,9 +151,12 @@ function(BuildTargets targets_path_list)
 endfunction()
 
 macro(ConfigProject)
+    if(EXISTS ${PROJECT_SOURCE_DIR}/build/toolchain.cmake)
+        include(${PROJECT_SOURCE_DIR}/build/toolchain.cmake)
+    endif()
+
     include(${PROJECT_SOURCE_DIR}/config/RibbonDFConfig.cmake)
 
-    # include_directories(${PROJECT_SOURCE_DIR}/config)
     if(${CONFIG_PROJECT_DEBUG})
         set(CMAKE_BUILD_TYPE Debug)
     else()
@@ -162,29 +165,37 @@ macro(ConfigProject)
 
     set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/install" CACHE PATH "Install path" FORCE)
 
-    set(CMAKE_C_COMPILER "${CONFIG_TOOL_CHAIN_PREFIX}${CONFIG_C_COMPILER}")
-    set(CMAKE_CXX_COMPILER "${CONFIG_TOOL_CHAIN_PREFIX}${CONFIG_CXX_COMPILER}")
+    # message(STATUS "${CONFIG_TOOL_CHAIN_PREFIX}${CONFIG_C_COMPILER}")
+    # find_program(CONFIG_C_COMPILER "${CONFIG_TOOL_CHAIN_PREFIX}${CONFIG_C_COMPILER}")
+    # find_program(CONFIG_CXX_COMPILER "${CONFIG_TOOL_CHAIN_PREFIX}${CONFIG_CXX_COMPILER}")
+    # message(STATUS "C_COMPILER: ${CONFIG_C_COMPILER}")
 
+    # set(CMAKE_SYSTEM_NAME "${CONFIG_SYSTEM_NAME}")
+    # set(CMAKE_SYSTEM_PROCESSOR "${CONFIG_SYSTEM_PROCESSOR}")
+    # set(CMAKE_C_COMPILER "${CONFIG_C_COMPILER}")
+    # set(CMAKE_CXX_COMPILER "${CONFIG_CXX_COMPILER}")
     set(CMAKE_C_FLAGS "${CONFIG_C_FLAGS}")
     set(CMAKE_CXX_FLAGS "${CONFIG_CXX_FLAGS}")
     set(CMAKE_EXE_LINKER_FLAGS "${CONFIG_LD_FLAGS}")
-
     add_definitions(${PROJECT_DEFINES} "${CONFIG_PROJECT_DEFINES}")
     message("Project Config")
-    message(STATUS "CMAKE_C_COMPILER: ${CMAKE_C_COMPILER}")
-    message(STATUS "CMAKE_CXX_COMPILER: ${CMAKE_CXX_COMPILER}")
-    message(STATUS "Project Install Path: ${CMAKE_INSTALL_PREFIX}")
     message(STATUS "Project Build Type: ${CMAKE_BUILD_TYPE}")
+    message(STATUS "Project Install Path: ${CMAKE_INSTALL_PREFIX}")
+    message(STATUS "Project System Name: ${CMAKE_SYSTEM_NAME}")
+    message(STATUS "Project System Processor: ${CMAKE_SYSTEM_PROCESSOR}")
     message(STATUS "Project C_COMPILER: ${CMAKE_C_COMPILER}")
     message(STATUS "Project CXX_COMPILER: ${CMAKE_CXX_COMPILER}")
     message(STATUS "Project CMAKE_C_FLAGS: ${CMAKE_C_FLAGS}")
     message(STATUS "Project CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
     message(STATUS "Project CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
-    message(STATUS "Project Defines: ${CONFIG_PROJECT_DEFINES}")
+
+    # message(STATUS "Project Defines: ${PROJECT_DEFINES}")
 endmacro()
 
-function(KconfigSetup targets)
+function(KconfigSetup)
     message("Kconfig Setup")
+
+    message(STATUS "${RibbonBuildPath}/RibbonKconfig.py -i${PROJECT_SOURCE_DIR};${RibbonComponentsPath}")
 
     # 入参改为项目路径和components路径
     execute_process(
@@ -254,12 +265,6 @@ function(DoBuild)
         message(FATAL_ERROR "Not find any module, exit build.")
     endif()
 
-    # kconfig生成
-    KconfigSetup("${targets}")
-
-    # 配置项目
-    ConfigProject()
-
     # 注册目标
     BuildTargets("${targets}")
 endfunction()
@@ -312,10 +317,16 @@ function(RibbonBuild)
     # 依赖检查
     DependentsCheck()
 
+    # kconfig生成
+    # KconfigSetup()
+
+    # 配置项目
+    ConfigProject()
+
     # 构建项目
     DoBuild()
 
     message(STATUS "Project Config done")
 endfunction()
 
-RibbonBuild()
+# RibbonBuild()

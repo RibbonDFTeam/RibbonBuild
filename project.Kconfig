@@ -3,6 +3,10 @@ config SYSTEM_NAME
     string "System name"
     default "Linux"
 
+config SYSTEM_PROCESSOR
+    string "System processor"
+    default "x86_64"
+
 config TOOL_CHAIN_PREFIX
     string "Tool chain prefix"
     default ""
@@ -14,6 +18,10 @@ config C_COMPILER
 config CXX_COMPILER
     string "cxx compiler"
     default "g++"
+
+config ASM_COMPILER
+    string "asm compiler"
+    default "as"
 
 config C_FLAGS
     string "c flags"

@@ -68,8 +68,6 @@ def kconfig_load(project_path):
     kconf = kconfiglib.Kconfig(os.path.join(project_path, "build/Kconfig"))
     if (os.path.exists(os.path.join(project_path, "config/.config"))):
         kconf.load_config(os.path.join(project_path, "config/.config"))
-    # else:
-    #      menuconfig(kconf)
     save_config(project_path, kconf)
 
 

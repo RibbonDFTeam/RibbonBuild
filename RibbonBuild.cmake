@@ -212,13 +212,8 @@ function(KconfigSetup)
         COMMAND exit
     )
 
-    if(EXISTS "${PROJECT_SOURCE_DIR}/build/Kconfig")
-        return()
-    endif()
-
     message(STATUS "Kconfig init")
 
-    # message(STATUS "${RibbonBuildPath}/RibbonKconfig.py -i${PROJECT_SOURCE_DIR};${RibbonComponentsPath}")
     execute_process(
         COMMAND python "${RibbonBuildPath}/RibbonKconfig.py" "-i${PROJECT_SOURCE_DIR};${RibbonComponentsPath}"
         RESULT_VARIABLE return_code

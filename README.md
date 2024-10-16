@@ -30,6 +30,13 @@ C/C++的工程化开发过程中，重复造轮子的现象很普遍。一个重
     git clone https://github.com/RibbonDFTeam/RibbonBuild.git
     ```
 2. 工程编译：
+   依赖`python3.8`以上版本,以及kconfiglib库。
+   - 安装kconfiglib库：
+    ```
+    pip install kconfiglib
+    ```
+
+   - 编译
     ```
     cd demo
     mkdir build

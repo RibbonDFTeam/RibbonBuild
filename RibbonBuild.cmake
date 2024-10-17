@@ -58,9 +58,12 @@ macro(TargetConfig)
 
     message(STATUS "Depend librarys: ${DEPEND_LIBS}")
 
-    target_compile_options(${target_name} PRIVATE "${TARGET_CMAKE_C_FLAGS}")
-    target_compile_options(${target_name} PRIVATE "${TARGET_CMAKE_CXX_FLAGS}")
-    target_link_options(${target_name} PRIVATE "${TARGET_CMAKE_EXE_LINKER_FLAGS}")
+    if(NOT ${LIBRARY_TYPE} STREQUAL "INTERFACE")
+        target_compile_options(${target_name} PRIVATE "${TARGET_CMAKE_C_FLAGS}")
+        target_compile_options(${target_name} PRIVATE "${TARGET_CMAKE_CXX_FLAGS}")
+        target_link_options(${target_name} PRIVATE "${TARGET_CMAKE_EXE_LINKER_FLAGS}")
+    endif()
+
     target_compile_definitions(${target_name} PRIVATE ${TARGET_DEFINES})
 
     if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
@@ -111,6 +114,8 @@ function(RibbonBuildComponent)
 
     if(${component_dynamic} STREQUAL "DYNAMIC")
         set(LIBRARY_TYPE SHARED)
+    elseif(${component_dynamic} STREQUAL "INTERFACE")
+        set(LIBRARY_TYPE INTERFACE)
     else()
         set(LIBRARY_TYPE STATIC)
     endif()
